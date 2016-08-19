@@ -20,7 +20,7 @@ public interface CurrencyExchangeService {
     @GET(Constants.SERVICE_LASTEST_RESOURCE)
     Call<CurrencyBase> getLastestExchangeRates(
             @Query("base") String baseCurrency,
-            @Query("symbols") String... requiredCurrencies);
+            @Query("symbols") String requiredCurrencies);
 
     @GET(Constants.SERVICE_HISTORICAL_RESOURCE)
     Call<CurrencyBase> getHistoricalExchangeRates(

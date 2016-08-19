@@ -7,7 +7,7 @@ public class Constants {
     public static final String CURRENCY_US = "USD";
     public static final String CURRENCY_EURO = "EUR";
     public static final String CURRENCY_ENGLAND = "GBP";
-    public static final String CURRENCY_BRAZIL = "BRZ";
+    public static final String CURRENCY_BRAZIL = "BRL";
     public static final String CURRENCY_JAPAN = "JPY";
 
     public static final String SERVICE_BASE_URL = "http://api.fixer.io";

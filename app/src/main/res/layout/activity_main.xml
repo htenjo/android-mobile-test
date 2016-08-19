@@ -32,7 +32,8 @@
             android:id="@+id/editText"
             android:layout_gravity="center_horizontal"
             android:singleLine="true"
-            android:text="U$"/>
+            android:textAlignment="center"
+            android:hint="USD $"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -95,7 +96,7 @@
                     android:layout_toRightOf="@id/button_flag_2"/>
                 <TextView
                     android:id="@+id/text2_flag_2"
-                    android:text="Rate: 0.73"
+                    android:text="Rate: 0.73$"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/button_flag_2"
@@ -156,7 +157,7 @@
                     android:layout_toRightOf="@id/button_flag_2"/>
                 <TextView
                     android:id="@+id/text2_flag_4"
-                    android:text="Rate: 0.73"
+                    android:text="$$$$$"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/button_flag_2"
