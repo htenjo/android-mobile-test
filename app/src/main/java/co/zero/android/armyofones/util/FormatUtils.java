@@ -3,6 +3,7 @@ package co.zero.android.armyofones.util;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Currency;
 import java.util.Date;
 
 /**
@@ -19,5 +20,18 @@ public class FormatUtils {
         format.setMinimumFractionDigits(minDecimals);
         format.setMaximumFractionDigits(maxDecimals);
         return format.format(number);
+    }
+
+    public static String formatDouble(double number){
+        return formatDouble(number, Constants.DEFAULT_MIN_DECIMALS, Constants.DEFAULT_MAX_DECIMALS);
+    }
+
+    public static String formatCurrency(double value, String currencyCode){
+        NumberFormat format = NumberFormat.getCurrencyInstance();
+        Currency currency = Currency.getInstance(currencyCode);
+        format.setMinimumFractionDigits(Constants.DEFAULT_MIN_DECIMALS);
+        format.setMaximumFractionDigits(Constants.DEFAULT_MAX_DECIMALS);
+        format.setCurrency(currency);
+        return format.format(value);
     }
 }

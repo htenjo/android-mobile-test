@@ -17,9 +17,9 @@ public class CurrencyExchangeServiceTest {
         service = NetworkFactory.buildService(CurrencyExchangeService.class, Constants.SERVICE_BASE_URL);
         requiredCurrencies = new String[]{
                 Constants.CURRENCY_EURO,
-                Constants.CURRENCY_BRAZIL,
-                Constants.CURRENCY_ENGLAND,
-                Constants.CURRENCY_JAPAN};
+                Constants.CURRENCY_BRL,
+                Constants.CURRENCY_GBP,
+                Constants.CURRENCY_JPY};
     }
 
     @Test

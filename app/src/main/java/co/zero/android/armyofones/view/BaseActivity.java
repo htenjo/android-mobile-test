@@ -13,4 +13,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected String getLogTag(){
         return this.getClass().getSimpleName();
     }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    protected String getStringFromId(int id){
+        return getResources().getString(id);
+    }
 }

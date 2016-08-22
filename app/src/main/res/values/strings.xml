@@ -2,4 +2,15 @@
     <string name="app_name">ArmyOfOnes</string>
     <string name="button_convert">Convert</string>
     <string name="army_of_ones_title">Army of Ones</string>
+
+    <string name="currency_euro_symbol">€</string>
+    <string name="currency_jpn_symbol">¥</string>
+    <string name="currency_grb_symbol">£</string>
+    <string name="currency_brl_symbol">R$</string>
+
+
+    <string name="currency_euro_code">EUR</string>
+    <string name="currency_jpn_code">JPY</string>
+    <string name="currency_grb_code">GBP</string>
+    <string name="currency_brl_code">BRL</string>
 </resources>

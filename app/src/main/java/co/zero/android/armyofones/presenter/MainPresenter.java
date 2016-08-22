@@ -3,6 +3,8 @@ package co.zero.android.armyofones.presenter;
 import android.util.Log;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import co.zero.android.armyofones.model.CurrencyBase;
 import co.zero.android.armyofones.model.Rates;
@@ -21,24 +23,27 @@ public class MainPresenter {
     private ConverterView view;
     private CurrencyExchangeService service;
     private static String[] currencies;
+    private HashMap<String, List<Double>> cache;
 
     static {
         currencies = new String[]{
-                Constants.CURRENCY_BRAZIL,
-                Constants.CURRENCY_ENGLAND,
                 Constants.CURRENCY_EURO,
-                Constants.CURRENCY_JAPAN
+                Constants.CURRENCY_GBP,
+                Constants.CURRENCY_JPY,
+                Constants.CURRENCY_BRL
         };
     }
 
     public MainPresenter(ConverterView view){
         this.view = view;
+        this.cache = new HashMap<>();
     }
 
     public void updateExchangeRates(){
         if(service == null){
             service = NetworkFactory.buildService(CurrencyExchangeService.class, Constants.SERVICE_BASE_URL);
         }
+
         String currenciesParams = Arrays.toString(currencies);
         currenciesParams = currenciesParams.substring(1, currenciesParams.length() - 1);
 
@@ -49,7 +54,9 @@ public class MainPresenter {
                 CurrencyBase currencyBase = response.body();
                 Rates rates = currencyBase.getRates();
                 Log.i(this.getClass().getSimpleName(), rates.toString());
-                view.updateRateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
+                view.updateExchangeRateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
+                view.updateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
+                view.updateChart(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
             }
 
             @Override
