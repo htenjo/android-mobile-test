@@ -16,4 +16,7 @@ public class Constants {
     public static final String SERVICE_DATE_FORMAT = "yyyy-MM-dd";
     public static final int DEFAULT_MIN_DECIMALS  = 2;
     public static final int DEFAULT_MAX_DECIMALS  = 2;
+
+    public static final String FONT_HUGE_BOLD_PATH = "fonts/huge_bold.ttf";
+    public static final String FONT_HUGE_NORMAL_PATH = "fonts/huge_bold.ttf";
 }

@@ -9,7 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".view.MainActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +21,6 @@
             android:text="@string/army_of_ones_title"
             android:id="@+id/textTitleView"
             android:layout_gravity="center_horizontal"/>
-
 
         <EditText
             android:layout_width="@dimen/input_text_size"
@@ -63,6 +61,7 @@
                 android:layout_height="@dimen/flag_size"
                 android:src="@drawable/eu"
                 android:layout_marginRight="@dimen/flag_img_margin"/>
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -88,6 +87,7 @@
                 android:layout_height="@dimen/flag_size"
                 android:src="@drawable/jp"
                 android:layout_marginRight="@dimen/flag_img_margin"/>
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -100,6 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/flag_text_rate_size" />
+
                 <TextView
                     android:id="@+id/text_value_jp"
                     android:text="@string/currency_jpn_symbol"
@@ -108,6 +109,7 @@
                     android:textSize="@dimen/flag_text_value_size" />
 
             </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -135,6 +137,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/flag_text_rate_size" />
+
                 <TextView
                     android:id="@+id/text_value_uk"
                     android:text="@string/currency_grb_symbol"
@@ -148,6 +151,7 @@
                 android:layout_height="@dimen/flag_size"
                 android:src="@drawable/br"
                 android:layout_marginRight="@dimen/flag_img_margin"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -168,6 +172,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/flag_text_value_size" />
             </LinearLayout>
+
         </LinearLayout>
 
         <com.github.mikephil.charting.charts.LineChart
@@ -175,5 +180,7 @@
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:layout_marginTop="20dp"/>
+
     </LinearLayout>
+
 </ScrollView>
