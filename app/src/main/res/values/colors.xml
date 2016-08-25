@@ -3,4 +3,5 @@
     <color name="colorPrimary">#ec008c</color>
     <color name="colorPrimaryDark">#C2185B</color>
     <color name="colorAccent">#607D8B</color>
+    <color name="huge_mag">#ec008c</color>
 </resources>

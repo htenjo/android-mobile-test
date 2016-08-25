@@ -34,11 +34,18 @@ public class MainPresenter {
         };
     }
 
+    /**
+     *
+     * @param view
+     */
     public MainPresenter(ConverterView view){
         this.view = view;
         this.cache = new HashMap<>();
     }
 
+    /**
+     * 
+     */
     public void updateExchangeRates(){
         if(service == null){
             service = NetworkFactory.buildService(CurrencyExchangeService.class, Constants.SERVICE_BASE_URL);

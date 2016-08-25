@@ -1,5 +1,8 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="default_padding">16dp</dimen>
+    <dimen name="default_margin">16dp</dimen>
+
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
@@ -8,4 +11,16 @@
     <dimen name="flag_text_rate_size">16sp</dimen>
     <dimen name="flag_text_value_size">12sp</dimen>
     <dimen name="flag_img_margin">8dp</dimen>
+
+    <dimen name="button_convert_text_size">16sp</dimen>
+    <dimen name="button_convert_layout_width">150dp</dimen>
+    <dimen name="button_convert_layout_height">40dp</dimen>
+    <dimen name="button_convert_margin_bottom">20dp</dimen>
+
+    <dimen name="chart_margin">20dp</dimen>
+    <dimen name="chart_height">220dp</dimen>
+
+    <dimen name="splash_width">100dp</dimen>
+    <dimen name="splash_height">100dp</dimen>
+    <dimen name="splash_text_size">10sp</dimen>
 </resources>

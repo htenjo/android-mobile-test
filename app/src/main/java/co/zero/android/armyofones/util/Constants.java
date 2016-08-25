@@ -19,4 +19,14 @@ public class Constants {
 
     public static final String FONT_HUGE_BOLD_PATH = "fonts/huge_bold.ttf";
     public static final String FONT_HUGE_NORMAL_PATH = "fonts/huge_bold.ttf";
+
+    public static final String POJO_FIELD_BASE = "base";
+    public static final String POJO_FIELD_DATE = "date";
+    public static final String POJO_FIELD_RATES = "rates";
+    public static final String POJO_FIELD_BRL = CURRENCY_BRL;
+    public static final String POJO_FIELD_GBP = CURRENCY_GBP;
+    public static final String POJO_FIELD_JPY = CURRENCY_JPY;
+    public static final String POJO_FIELD_EUR = CURRENCY_EURO;
+
+    public static final String TEXT_RATE_TEMPLATE = "Rate: %s";
 }

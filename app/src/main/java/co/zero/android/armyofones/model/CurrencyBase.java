@@ -4,15 +4,19 @@ package co.zero.android.armyofones.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CurrencyBase {
+import java.io.Serializable;
 
-    @SerializedName("base")
+import co.zero.android.armyofones.util.Constants;
+
+public class CurrencyBase implements Serializable{
+
+    @SerializedName(Constants.POJO_FIELD_BASE)
     @Expose
     private String base;
-    @SerializedName("date")
+    @SerializedName(Constants.POJO_FIELD_DATE)
     @Expose
     private String date;
-    @SerializedName("rates")
+    @SerializedName(Constants.POJO_FIELD_RATES)
     @Expose
     private Rates rates;
 

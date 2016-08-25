@@ -6,18 +6,22 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class Rates {
+import java.io.Serializable;
 
-    @SerializedName("BRL")
+import co.zero.android.armyofones.util.Constants;
+
+public class Rates implements Serializable{
+
+    @SerializedName(Constants.POJO_FIELD_BRL)
     @Expose
     private Double bRL;
-    @SerializedName("GBP")
+    @SerializedName(Constants.POJO_FIELD_GBP)
     @Expose
     private Double gBP;
-    @SerializedName("JPY")
+    @SerializedName(Constants.POJO_FIELD_JPY)
     @Expose
     private Double jPY;
-    @SerializedName("EUR")
+    @SerializedName(Constants.POJO_FIELD_EUR)
     @Expose
     private Double eUR;
 

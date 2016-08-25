@@ -1,8 +1,9 @@
 package co.zero.android.armyofones.view;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import co.zero.android.armyofones.R;
@@ -31,6 +33,12 @@ public class MainActivity extends BaseActivity implements ConverterView{
     private static final int GBP_DATASET_POSITION = 1;
     private static final int JPY_DATASET_POSITION = 2;
     private static final int BRL_DATASET_POSITION = 3;
+    private static final int DEFAULT_CHART_ANIMATION_TIME = 1500;
+    private static final int JAPAN_SCALE_FACTOR = 100;
+    public static final String SAVED_RATES_NAME = "currentRates";
+    public static final String SAVED_VALUE_NAME = "currentValue";
+    private HashMap<String, Double> currentRates;
+    private Double currentValue;
     private MainPresenter presenter;
     private LineChart mChart;
 
@@ -39,33 +47,74 @@ public class MainActivity extends BaseActivity implements ConverterView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         presenter = new MainPresenter(this);
+        currentRates = new HashMap<>();
+
         Button convert = (Button)findViewById(R.id.button_convert);
         convert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.updateExchangeRates();
+                if(isNetworkConnected()){
+                    presenter.updateExchangeRates();
+                }else{
+                    Toast.makeText(MainActivity.this, "Please connect to internet!", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
-        paintChart();
+        buildChart();
         initChartValues();
      }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(SAVED_RATES_NAME, currentRates);
+
+        if(currentValue != null) {
+            outState.putDouble(SAVED_VALUE_NAME, currentValue);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentRates = (HashMap<String, Double>) savedInstanceState.getSerializable(SAVED_RATES_NAME);
+        currentValue = savedInstanceState.getDouble(SAVED_VALUE_NAME);
+
+        if(currentRates.size() > 0) {
+            updateExchangeRateValues(
+                    currentRates.get(Constants.CURRENCY_EURO),
+                    currentRates.get(Constants.CURRENCY_GBP),
+                    currentRates.get(Constants.CURRENCY_JPY),
+                    currentRates.get(Constants.CURRENCY_BRL));
+            updateValues(
+                    currentRates.get(Constants.CURRENCY_EURO),
+                    currentRates.get(Constants.CURRENCY_GBP),
+                    currentRates.get(Constants.CURRENCY_JPY),
+                    currentRates.get(Constants.CURRENCY_BRL));
+        }
+    }
+
+
+    @Override
     public void updateExchangeRateValues(double euroRate, double gbrRate, double jpyRate, double brzRate) {
+        currentRates.put(Constants.CURRENCY_EURO, euroRate);
+        currentRates.put(Constants.CURRENCY_GBP, gbrRate);
+        currentRates.put(Constants.CURRENCY_JPY, jpyRate);
+        currentRates.put(Constants.CURRENCY_BRL, brzRate);
         TextView rateEuField = (TextView)findViewById(R.id.text_rate_eu);
         TextView rateJpField = (TextView)findViewById(R.id.text_rate_jp);
         TextView rateGrbField = (TextView)findViewById(R.id.text_rate_uk);
         TextView rateBzField = (TextView)findViewById(R.id.text_rate_bz);
+        String template = Constants.TEXT_RATE_TEMPLATE;
 
-        rateEuField.setText(String.format("Rate: %s", FormatUtils.formatDouble(euroRate)));
-        rateJpField.setText(String.format("Rate: %s", FormatUtils.formatDouble(jpyRate)));
-        rateGrbField.setText(String.format("Rate: %s", FormatUtils.formatDouble(gbrRate)));
-        rateBzField.setText(String.format("Rate: %s", FormatUtils.formatDouble(brzRate)));
+        rateEuField.setText(String.format(template, FormatUtils.formatDouble(euroRate)));
+        rateJpField.setText(String.format(template, FormatUtils.formatDouble(jpyRate)));
+        rateGrbField.setText(String.format(template, FormatUtils.formatDouble(gbrRate)));
+        rateBzField.setText(String.format(template, FormatUtils.formatDouble(brzRate)));
 
-        mChart.animateXY(1000, 1000);
-        Toast.makeText(this, "Exchange Rates Updated", Toast.LENGTH_SHORT);
-        Log.i(getLogTag(), "::::::::::: Values updated");
+        mChart.animateXY(DEFAULT_CHART_ANIMATION_TIME, DEFAULT_CHART_ANIMATION_TIME);
+        Toast.makeText(this, "Exchange Rates Updated", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -94,7 +143,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
         }
 
         int entryCounter = mChart.getData().getDataSetByIndex(EURO_DATASET_POSITION).getEntryCount();
-        jpyRate /= 100;
+        jpyRate /= JAPAN_SCALE_FACTOR;
         entryCounter++;
         mChart.getData().addEntry(new Entry(entryCounter, ((Double) euroRate).floatValue()), EURO_DATASET_POSITION);
         mChart.getData().addEntry(new Entry(entryCounter, ((Double) gbpRate).floatValue()), GBP_DATASET_POSITION);
@@ -102,6 +151,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
         mChart.getData().addEntry(new Entry(entryCounter, ((Double) brlRate).floatValue()), BRL_DATASET_POSITION);
         mChart.getData().notifyDataChanged();
         mChart.notifyDataSetChanged();
+        mChart.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -110,7 +160,8 @@ public class MainActivity extends BaseActivity implements ConverterView{
         String usStringValue = valueUsField.getText().toString();
 
         try{
-            return Double.parseDouble(usStringValue);
+            currentValue = Double.parseDouble(usStringValue);
+            return currentValue;
         }catch (NumberFormatException | NullPointerException e){
             return 0;
         }
@@ -118,7 +169,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
 
     @Override
     public void showError(String error) {
-        Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT);
+        Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
     }
 
     private void initChartValues(){
@@ -130,7 +181,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
         if(mChart.getData() == null){
             LineDataSet euroSet = buildDataSet(Constants.CURRENCY_EURO, euroEntries, Color.rgb(239, 3, 137));
             LineDataSet gbpSet = buildDataSet(Constants.CURRENCY_GBP, gbpEntries, Color.rgb(43, 102, 196));
-            LineDataSet jpySet = buildDataSet(Constants.CURRENCY_JPY + "/100", jpyEntries, Color.rgb(235, 221, 73));
+            LineDataSet jpySet = buildDataSet(Constants.CURRENCY_JPY + "/" + JAPAN_SCALE_FACTOR, jpyEntries, Color.rgb(235, 221, 73));
             LineDataSet brlSet = buildDataSet(Constants.CURRENCY_BRL, brlEntries, Color.rgb(91, 191, 52));
 
             euroSet.setValueTextSize(9f);
@@ -153,7 +204,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
     /**
      *
      */
-    private void paintChart(){
+    private void buildChart(){
         mChart = (LineChart) findViewById(R.id.chart1);
         mChart.setDescription(StringUtils.EMPTY);
         mChart.setTouchEnabled(true);
@@ -172,7 +223,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
         mChart.getAxisRight().setEnabled(false);
         mChart.getLegend().setEnabled(true);
         mChart.getLegend().setPosition(Legend.LegendPosition.ABOVE_CHART_CENTER);
-        mChart.animateXY(2000, 2000);
+        mChart.animateXY(DEFAULT_CHART_ANIMATION_TIME, DEFAULT_CHART_ANIMATION_TIME);
         // dont forget to refresh the drawing
         mChart.invalidate();
     }
@@ -198,5 +249,10 @@ public class MainActivity extends BaseActivity implements ConverterView{
         set.setColor(color);
         set.setDrawHorizontalHighlightIndicator(true);
         return set;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 }

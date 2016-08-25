@@ -15,97 +15,99 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/textTitleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_gravity="center_horizontal"
             android:text="@string/army_of_ones_title"
-            android:id="@+id/textTitleView"
-            android:layout_gravity="center_horizontal"/>
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <EditText
+            android:id="@+id/text_value_us"
             android:layout_width="@dimen/input_text_size"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/text_value_us"
             android:layout_gravity="center_horizontal"
+            android:ems="10"
+            android:hint="@string/currency_us_symbol"
+            android:inputType="number"
             android:singleLine="true"
-            android:textAlignment="center"
-            android:hint="USD $"/>
+            android:textAlignment="center" />
 
         <Button
             android:id="@+id/button_convert"
-            android:text="@string/button_convert"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:layout_width="150dp"
-            android:layout_height="40dp"
-            android:background="@drawable/buttonshape"
+            android:layout_width="@dimen/button_convert_layout_width"
+            android:layout_height="@dimen/button_convert_layout_height"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="20dp"
-            android:textAllCaps="false"/>
+            android:layout_marginBottom="@dimen/button_convert_margin_bottom"
+            android:layout_marginTop="@dimen/default_margin"
+            android:background="@drawable/buttonshape"
+            android:text="@string/button_convert"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/button_convert_text_size"
+            android:focusable="true"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false"
             android:layout_gravity="center_vertical"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:baselineAligned="false"
             android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:layout_marginBottom="16dp">
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/default_padding">
 
             <ImageView
                 android:layout_width="@dimen/flag_size"
                 android:layout_height="@dimen/flag_size"
-                android:src="@drawable/eu"
-                android:layout_marginRight="@dimen/flag_img_margin"/>
+                android:layout_marginRight="@dimen/flag_img_margin"
+                android:src="@drawable/eu" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/text_rate_eu"
-                    android:text="Rate: 0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/default_rate"
                     android:textSize="@dimen/flag_text_rate_size" />
+
                 <TextView
                     android:id="@+id/text_value_eu"
-                    android:text="@string/currency_euro_symbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/currency_euro_symbol"
                     android:textSize="@dimen/flag_text_value_size" />
             </LinearLayout>
 
             <ImageView
                 android:layout_width="@dimen/flag_size"
                 android:layout_height="@dimen/flag_size"
-                android:src="@drawable/jp"
-                android:layout_marginRight="@dimen/flag_img_margin"/>
+                android:layout_marginRight="@dimen/flag_img_margin"
+                android:src="@drawable/jp" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/text_rate_jp"
-                    android:text="Rate: 0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Rate: 0"
                     android:textSize="@dimen/flag_text_rate_size" />
 
                 <TextView
                     android:id="@+id/text_value_jp"
-                    android:text="@string/currency_jpn_symbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/currency_jpn_symbol"
                     android:textSize="@dimen/flag_text_value_size" />
 
             </LinearLayout>
@@ -115,61 +117,63 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:baselineAligned="false"
             android:gravity="center_vertical"
-            android:paddingLeft="16dp">
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/default_padding">
 
             <ImageView
                 android:layout_width="@dimen/flag_size"
                 android:layout_height="@dimen/flag_size"
-                android:src="@drawable/uk"
-                android:layout_marginRight="@dimen/flag_img_margin"/>
+                android:layout_marginRight="@dimen/flag_img_margin"
+                android:src="@drawable/uk" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/text_rate_uk"
-                    android:text="Rate: 0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/default_rate"
                     android:textSize="@dimen/flag_text_rate_size" />
 
                 <TextView
                     android:id="@+id/text_value_uk"
-                    android:text="@string/currency_grb_symbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/currency_grb_symbol"
                     android:textSize="@dimen/flag_text_value_size" />
             </LinearLayout>
 
             <ImageView
                 android:layout_width="@dimen/flag_size"
                 android:layout_height="@dimen/flag_size"
-                android:src="@drawable/br"
-                android:layout_marginRight="@dimen/flag_img_margin"/>
+                android:layout_marginRight="@dimen/flag_img_margin"
+                android:src="@drawable/br" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:layout_gravity="center_vertical">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/text_rate_bz"
-                    android:text="BZ 0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/default_rate"
                     android:textSize="@dimen/flag_text_rate_size" />
+
                 <TextView
                     android:id="@+id/text_value_bz"
-                    android:text="@string/currency_brl_symbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/currency_brl_symbol"
                     android:textSize="@dimen/flag_text_value_size" />
             </LinearLayout>
 
@@ -178,9 +182,8 @@
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart1"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_marginTop="20dp"/>
-
+            android:layout_height="@dimen/chart_height"
+            android:layout_marginTop="@dimen/chart_margin"
+            android:visibility="gone"/>
     </LinearLayout>
-
 </ScrollView>
