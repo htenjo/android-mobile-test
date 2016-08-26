@@ -2,6 +2,7 @@ package co.zero.android.armyofones.util;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Currency;
 import java.util.Date;
@@ -33,5 +34,10 @@ public class FormatUtils {
         format.setMaximumFractionDigits(Constants.DEFAULT_MAX_DECIMALS);
         format.setCurrency(currency);
         return format.format(value);
+    }
+
+    public static Date parseDate(String dateFormated, String format) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat(format);
+        return formatter.parse(dateFormated);
     }
 }

@@ -7,6 +7,6 @@ public interface ConverterView {
     void updateExchangeRateValues(double euroRate, double gbrRate, double jpyRate, double brzRate);
     void updateValues(double euroRate, double gbpRate, double jpyRate, double brlRate);
     void updateChart(double euroRate, double gbpRate, double jpyRate, double brlRate);
-    void showError(String error);
+    void showMessage(String message, int length);
     double getCurrentUSD();
 }

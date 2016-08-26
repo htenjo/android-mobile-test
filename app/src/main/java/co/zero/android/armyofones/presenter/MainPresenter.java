@@ -1,15 +1,20 @@
 package co.zero.android.armyofones.presenter;
 
-import android.util.Log;
+import android.app.Activity;
+import android.content.Context;
+import android.widget.Toast;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import co.zero.android.armyofones.model.CurrencyBase;
 import co.zero.android.armyofones.model.Rates;
+import co.zero.android.armyofones.persistence.ExchangeRateManager;
 import co.zero.android.armyofones.service.CurrencyExchangeService;
 import co.zero.android.armyofones.service.NetworkFactory;
+import co.zero.android.armyofones.util.AndroidUtils;
 import co.zero.android.armyofones.util.Constants;
 import co.zero.android.armyofones.view.ConverterView;
 import retrofit2.Call;
@@ -24,6 +29,7 @@ public class MainPresenter {
     private CurrencyExchangeService service;
     private static String[] currencies;
     private HashMap<String, List<Double>> cache;
+    private ExchangeRateManager rateManager;
 
     static {
         currencies = new String[]{
@@ -41,35 +47,73 @@ public class MainPresenter {
     public MainPresenter(ConverterView view){
         this.view = view;
         this.cache = new HashMap<>();
+        this.rateManager = new ExchangeRateManager(((Activity)view).getApplicationContext());
     }
 
     /**
      * 
      */
-    public void updateExchangeRates(){
+    public void updateExchangeRates(boolean forceRemoteUpdate){
+        initService();
+
+        if(forceRemoteUpdate){
+            updateDataFromRemote();
+        }else{
+            Rates rates = rateManager.getAvgRatesByDay(new Date());
+
+            if(rates == null){
+                updateDataFromRemote();
+            }else{
+                updateViews(rates);
+            }
+        }
+    }
+
+    private void updateDataFromRemote(){
+        if(AndroidUtils.isNetworkConnected(getContext())){
+            String currenciesParams = Arrays.toString(currencies);
+            currenciesParams = currenciesParams.substring(1, currenciesParams.length() - 1);
+
+            Call<CurrencyBase> call = service.getLastestExchangeRates(Constants.CURRENCY_US, currenciesParams);
+            call.enqueue(new Callback<CurrencyBase>() {
+                @Override
+                public void onResponse(Call<CurrencyBase> call, Response<CurrencyBase> response) {
+                    CurrencyBase currencyBase = response.body();
+                    Rates rates = currencyBase.getRates();
+                    rateManager.insertRates(rates, new Date());
+                    updateViews(rates);
+                }
+
+                @Override
+                public void onFailure(Call<CurrencyBase> call, Throwable t) {
+                    view.showMessage("Service Error: " + t.getMessage(), Toast.LENGTH_LONG);
+                }
+            });
+        }else{
+            Toast.makeText(getContext(), "Please connect to internet!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     *
+     */
+    private void initService(){
         if(service == null){
             service = NetworkFactory.buildService(CurrencyExchangeService.class, Constants.SERVICE_BASE_URL);
         }
+    }
 
-        String currenciesParams = Arrays.toString(currencies);
-        currenciesParams = currenciesParams.substring(1, currenciesParams.length() - 1);
+    /**
+     *
+     * @param rates
+     */
+    private void updateViews(Rates rates){
+        view.updateExchangeRateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
+        view.updateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
+        view.updateChart(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
+    }
 
-        Call<CurrencyBase> call = service.getLastestExchangeRates(Constants.CURRENCY_US, currenciesParams);
-        call.enqueue(new Callback<CurrencyBase>() {
-            @Override
-            public void onResponse(Call<CurrencyBase> call, Response<CurrencyBase> response) {
-                CurrencyBase currencyBase = response.body();
-                Rates rates = currencyBase.getRates();
-                Log.i(this.getClass().getSimpleName(), rates.toString());
-                view.updateExchangeRateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
-                view.updateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
-                view.updateChart(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
-            }
-
-            @Override
-            public void onFailure(Call<CurrencyBase> call, Throwable t) {
-                view.showError(t.getMessage());
-            }
-        });
+    private Context getContext(){
+        return ((Activity)view).getApplicationContext();
     }
 }

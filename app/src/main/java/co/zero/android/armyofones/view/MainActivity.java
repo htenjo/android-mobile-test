@@ -1,8 +1,6 @@
 package co.zero.android.armyofones.view;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +40,10 @@ public class MainActivity extends BaseActivity implements ConverterView{
     private MainPresenter presenter;
     private LineChart mChart;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +55,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
         convert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isNetworkConnected()){
-                    presenter.updateExchangeRates();
-                }else{
-                    Toast.makeText(MainActivity.this, "Please connect to internet!", Toast.LENGTH_LONG).show();
-                }
+                presenter.updateExchangeRates(false);
             }
         });
 
@@ -65,6 +63,10 @@ public class MainActivity extends BaseActivity implements ConverterView{
         initChartValues();
      }
 
+    /**
+     *
+     * @param outState
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -75,6 +77,10 @@ public class MainActivity extends BaseActivity implements ConverterView{
         }
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -95,7 +101,13 @@ public class MainActivity extends BaseActivity implements ConverterView{
         }
     }
 
-
+    /**
+     *
+     * @param euroRate
+     * @param gbrRate
+     * @param jpyRate
+     * @param brzRate
+     */
     @Override
     public void updateExchangeRateValues(double euroRate, double gbrRate, double jpyRate, double brzRate) {
         currentRates.put(Constants.CURRENCY_EURO, euroRate);
@@ -117,6 +129,13 @@ public class MainActivity extends BaseActivity implements ConverterView{
         Toast.makeText(this, "Exchange Rates Updated", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     *
+     * @param euroRate
+     * @param gbpRate
+     * @param jpyRate
+     * @param brlRate
+     */
     @Override
     public void updateValues(double euroRate, double gbpRate, double jpyRate, double brlRate) {
         TextView valueEuField = (TextView)findViewById(R.id.text_value_eu);
@@ -136,6 +155,13 @@ public class MainActivity extends BaseActivity implements ConverterView{
         valueBzField.setText(FormatUtils.formatCurrency(bzValue, getStringFromId(R.string.currency_brl_code)));
     }
 
+    /**
+     *
+     * @param euroRate
+     * @param gbpRate
+     * @param jpyRate
+     * @param brlRate
+     */
     @Override
     public void updateChart(double euroRate, double gbpRate, double jpyRate, double brlRate) {
         if (mChart.getData() == null || mChart.getData().getDataSetCount() == 0) {
@@ -154,6 +180,10 @@ public class MainActivity extends BaseActivity implements ConverterView{
         mChart.setVisibility(View.VISIBLE);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getCurrentUSD() {
         TextView valueUsField = (TextView)findViewById(R.id.text_value_us);
@@ -167,9 +197,13 @@ public class MainActivity extends BaseActivity implements ConverterView{
         }
     }
 
+    /**
+     *
+     * @param message
+     */
     @Override
-    public void showError(String error) {
-        Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
+    public void showMessage(String message, int length) {
+        Toast.makeText(this, message, length).show();
     }
 
     private void initChartValues(){
@@ -249,10 +283,5 @@ public class MainActivity extends BaseActivity implements ConverterView{
         set.setColor(color);
         set.setDrawHorizontalHighlightIndicator(true);
         return set;
-    }
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 }

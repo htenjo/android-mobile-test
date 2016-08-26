@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import co.zero.android.armyofones.util.Constants;
 
@@ -24,6 +25,8 @@ public class Rates implements Serializable{
     @SerializedName(Constants.POJO_FIELD_EUR)
     @Expose
     private Double eUR;
+
+    private Date date;
 
     /**
      *
@@ -95,6 +98,14 @@ public class Rates implements Serializable{
      */
     public void setEUR(Double eUR) {
         this.eUR = eUR;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override
