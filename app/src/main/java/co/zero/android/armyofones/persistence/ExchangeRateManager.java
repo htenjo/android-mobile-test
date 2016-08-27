@@ -118,7 +118,7 @@ public class ExchangeRateManager {
                 .append(", AVG(").append(ExchangeRateContract.RateEntry.COLUMN_JPY).append(")")
                 .append(", AVG(").append(ExchangeRateContract.RateEntry.COLUMN_BRL).append(")")
                 .append(" FROM ").append(ExchangeRateContract.RateEntry.TABLE_NAME)
-                .append(" WHERE ").append(ExchangeRateContract.RateEntry.COLUMN_DATE).append(" = Datetime(?)")
+                .append(" WHERE ").append(ExchangeRateContract.RateEntry.COLUMN_DATE).append(" = Date(?)")
                 .append(" GROUP BY ").append(ExchangeRateContract.RateEntry.COLUMN_DATE)
                 .append(" ORDER BY ").append(ExchangeRateContract.RateEntry._ID);
         return query.toString();
@@ -137,7 +137,7 @@ public class ExchangeRateManager {
                 .append(ExchangeRateContract.RateEntry.COLUMN_DATE)
                 .append(" FROM ").append(ExchangeRateContract.RateEntry.TABLE_NAME)
                 .append(" WHERE ").append(ExchangeRateContract.RateEntry.COLUMN_DATE)
-                .append("   BETWEEN Datetime(?) AND Datetime(?)")
+                .append("   BETWEEN Date(?) AND Date(?)")
                 .append(" GROUP BY ").append(ExchangeRateContract.RateEntry.COLUMN_DATE)
                 .append(" ORDER BY ").append(ExchangeRateContract.RateEntry._ID);
         return query.toString();
