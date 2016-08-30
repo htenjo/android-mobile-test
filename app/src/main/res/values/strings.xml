@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ArmyOfOnes</string>
     <string name="button_convert">Convert</string>
+    <string name="button_chart_daily">Daily</string>
+    <string name="button_chart_monthly">Monthly</string>
     <string name="army_of_ones_title">Army of Ones</string>
 
     <string name="currency_euro_symbol">€</string>
@@ -17,4 +19,8 @@
 
     <string name="default_rate">Rate: 0</string>
     <string name="default_huge">Huge</string>
+
+    <string name="menu_update_rates">Update Rates</string>
+    <string name="menu_chart_daily">Daily Chart</string>
+    <string name="menu_chart_monthly">Monthly Chart</string>
 </resources>

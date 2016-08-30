@@ -59,7 +59,7 @@ public class ExchangeRateManager {
      * @return Object with the average rates of the day
      */
     public Rates getAvgRatesByDay(Date date){
-        String query = buildQueryRatesValuesByDay();
+        String query = buildQueryAvgRatesValuesByDay();
         String dateFormatted = FormatUtils.formatDate(date, DEFAULT_DATE_FORMAT);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.rawQuery(query.toString(), new String[]{dateFormatted});
@@ -82,25 +82,60 @@ public class ExchangeRateManager {
      * @param date The day of the month of the required rates
      * @return Collection on Rates (one per day) of the month
      */
-    public List<Rates> getRateValuesByMonth(Date date) throws ParseException {
-        String[] params = buildParamsQueryRatesValuesByMonth(date);
-        String query = buildQueryRatesValuesByMonth();
-        Cursor cursor = dbHelper.getReadableDatabase().rawQuery(query.toString(), params);
+    public List<Rates> getRateValuesByDay(Date date) {
+        String query = buildQueryRatesValuesByDay();
+        String dateFormatted = FormatUtils.formatDate(date, DEFAULT_DATE_FORMAT);
+        String[] params = new String[]{dateFormatted};
         List<Rates> ratesList = new ArrayList<>();
         Rates rates;
 
-        if(cursor.moveToFirst()){
-            rates = new Rates();
-            rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));
-            rates.setGBP(cursor.getDouble(COLUMN_GBR_INDEX));
-            rates.setJPY(cursor.getDouble(COLUMN_JPY_INDEX));
-            rates.setBRL(cursor.getDouble(COLUMN_BRL_INDEX));
+        try (Cursor cursor = dbHelper.getReadableDatabase().rawQuery(query.toString(), params)){
+            while (cursor.moveToNext()) {
+                rates = new Rates();
+                rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));
+                rates.setGBP(cursor.getDouble(COLUMN_GBR_INDEX));
+                rates.setJPY(cursor.getDouble(COLUMN_JPY_INDEX));
+                rates.setBRL(cursor.getDouble(COLUMN_BRL_INDEX));
 
-            try{
-                String dateFormatted = cursor.getString(COLUMN_DATE_INDEX);
-                rates.setDate(FormatUtils.parseDate(dateFormatted, DEFAULT_DATE_FORMAT));
-            }catch(ParseException e){
-                Log.e(getClass().getSimpleName(), e.getMessage());
+                try{
+                    dateFormatted = cursor.getString(COLUMN_DATE_INDEX);
+                    rates.setDate(FormatUtils.parseDate(dateFormatted, DEFAULT_DATE_FORMAT));
+                    ratesList.add(rates);
+                }catch(ParseException e){
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
+            }
+        }
+
+        return ratesList;
+    }
+
+    /**
+     * This method calculate the average exchanges rates for a Month given a day
+     * @param date The day of the month of the required rates
+     * @return Collection on Rates (one per day) of the month
+     */
+    public List<Rates> getRateValuesByMonth(Date date) {
+        String[] params = buildParamsQueryRatesValuesByMonth(date);
+        String query = buildQueryRatesValuesByMonth();
+        List<Rates> ratesList = new ArrayList<>();
+        Rates rates;
+
+        try (Cursor cursor = dbHelper.getReadableDatabase().rawQuery(query.toString(), params)) {
+            while (cursor.moveToNext()) {
+                rates = new Rates();
+                rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));
+                rates.setGBP(cursor.getDouble(COLUMN_GBR_INDEX));
+                rates.setJPY(cursor.getDouble(COLUMN_JPY_INDEX));
+                rates.setBRL(cursor.getDouble(COLUMN_BRL_INDEX));
+
+                try{
+                    String dateFormatted = cursor.getString(COLUMN_DATE_INDEX);
+                    rates.setDate(FormatUtils.parseDate(dateFormatted, DEFAULT_DATE_FORMAT));
+                    ratesList.add(rates);
+                }catch(ParseException e){
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
             }
         }
 
@@ -111,7 +146,7 @@ public class ExchangeRateManager {
      *
      * @return
      */
-    private String buildQueryRatesValuesByDay(){
+    private String buildQueryAvgRatesValuesByDay(){
         StringBuilder query = new StringBuilder();
         query.append("SELECT AVG(").append(ExchangeRateContract.RateEntry.COLUMN_EURO).append(")")
                 .append(", AVG(").append(ExchangeRateContract.RateEntry.COLUMN_GBP).append(")")
@@ -120,6 +155,23 @@ public class ExchangeRateManager {
                 .append(" FROM ").append(ExchangeRateContract.RateEntry.TABLE_NAME)
                 .append(" WHERE ").append(ExchangeRateContract.RateEntry.COLUMN_DATE).append(" = Date(?)")
                 .append(" GROUP BY ").append(ExchangeRateContract.RateEntry.COLUMN_DATE)
+                .append(" ORDER BY ").append(ExchangeRateContract.RateEntry._ID);
+        return query.toString();
+    }
+
+    /**
+     *
+     * @return
+     */
+    private String buildQueryRatesValuesByDay(){
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT ").append(ExchangeRateContract.RateEntry.COLUMN_EURO)
+                .append(", ").append(ExchangeRateContract.RateEntry.COLUMN_GBP)
+                .append(", ").append(ExchangeRateContract.RateEntry.COLUMN_JPY)
+                .append(", ").append(ExchangeRateContract.RateEntry.COLUMN_BRL)
+                .append(", ").append(ExchangeRateContract.RateEntry.COLUMN_DATE)
+                .append(" FROM ").append(ExchangeRateContract.RateEntry.TABLE_NAME)
+                .append(" WHERE ").append(ExchangeRateContract.RateEntry.COLUMN_DATE).append(" = Date(?)")
                 .append(" ORDER BY ").append(ExchangeRateContract.RateEntry._ID);
         return query.toString();
     }

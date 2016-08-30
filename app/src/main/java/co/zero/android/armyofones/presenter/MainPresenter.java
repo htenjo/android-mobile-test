@@ -2,11 +2,11 @@ package co.zero.android.armyofones.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import co.zero.android.armyofones.model.CurrencyBase;
@@ -28,7 +28,6 @@ public class MainPresenter {
     private ConverterView view;
     private CurrencyExchangeService service;
     private static String[] currencies;
-    private HashMap<String, List<Double>> cache;
     private ExchangeRateManager rateManager;
 
     static {
@@ -46,7 +45,6 @@ public class MainPresenter {
      */
     public MainPresenter(ConverterView view){
         this.view = view;
-        this.cache = new HashMap<>();
         this.rateManager = new ExchangeRateManager(((Activity)view).getApplicationContext());
     }
 
@@ -65,10 +63,14 @@ public class MainPresenter {
                 updateDataFromRemote();
             }else{
                 updateViews(rates);
+                Log.i(this.getClass().getSimpleName(), "Exchange Rates Updated from LOCAL");
             }
         }
     }
 
+    /**
+     *
+     */
     private void updateDataFromRemote(){
         if(AndroidUtils.isNetworkConnected(getContext())){
             String currenciesParams = Arrays.toString(currencies);
@@ -81,6 +83,8 @@ public class MainPresenter {
                     CurrencyBase currencyBase = response.body();
                     Rates rates = currencyBase.getRates();
                     rateManager.insertRates(rates, new Date());
+                    Log.i(MainPresenter.this.getClass().getSimpleName(), "Exchange Rates Updated from REMOTE");
+                    Toast.makeText(getContext(), "Exchange Rates Updated", Toast.LENGTH_SHORT).show();
                     updateViews(rates);
                 }
 
@@ -110,9 +114,22 @@ public class MainPresenter {
     private void updateViews(Rates rates){
         view.updateExchangeRateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
         view.updateValues(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
-        view.updateChart(rates.getEUR(), rates.getGBP(), rates.getJPY(), rates.getBRL());
+        List<Rates> ratesList;
+        Date currentDate = new Date();
+
+        if(view.isConfiguredDailyChart()){
+            ratesList = rateManager.getRateValuesByDay(currentDate);
+            view.updateChartValues(ratesList, true);
+        }else{
+            ratesList = rateManager.getRateValuesByMonth(currentDate);
+            view.updateChartValues(ratesList, false);
+        }
     }
 
+    /**
+     *
+     * @return
+     */
     private Context getContext(){
         return ((Activity)view).getApplicationContext();
     }

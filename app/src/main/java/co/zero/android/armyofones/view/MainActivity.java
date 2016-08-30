@@ -1,9 +1,16 @@
 package co.zero.android.armyofones.view;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,10 +25,12 @@ import com.github.mikephil.charting.data.LineDataSet;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
 import co.zero.android.armyofones.R;
+import co.zero.android.armyofones.model.Rates;
 import co.zero.android.armyofones.presenter.MainPresenter;
 import co.zero.android.armyofones.util.Constants;
 import co.zero.android.armyofones.util.FormatUtils;
@@ -33,12 +42,16 @@ public class MainActivity extends BaseActivity implements ConverterView{
     private static final int BRL_DATASET_POSITION = 3;
     private static final int DEFAULT_CHART_ANIMATION_TIME = 1500;
     private static final int JAPAN_SCALE_FACTOR = 100;
+    private static final int BRAZIL_SCALE_FACTOR = 3;
     public static final String SAVED_RATES_NAME = "currentRates";
     public static final String SAVED_VALUE_NAME = "currentValue";
+    public static final String PREFERENCES_NAME = "ArmyOfOnesPref";
+    public static final String PREFERENCE_CHART_DAILY = "dailyChartType";
     private HashMap<String, Double> currentRates;
     private Double currentValue;
     private MainPresenter presenter;
     private LineChart mChart;
+    private Menu menu;
 
     /**
      *
@@ -59,9 +72,90 @@ public class MainActivity extends BaseActivity implements ConverterView{
             }
         });
 
+        EditText valueUsField = (EditText)findViewById(R.id.text_value_us);
+        valueUsField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+                        || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    presenter.updateExchangeRates(false);
+                }
+
+                return false;
+            }
+        });
+
         buildChart();
-        initChartValues();
+        initChartDataSets();
      }
+
+    /**
+     *
+     * @param menu
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        this.menu = menu;
+
+        if(!settings.contains(PREFERENCE_CHART_DAILY)){
+            editor.putBoolean(PREFERENCE_CHART_DAILY, true).commit();
+        }
+
+        updateMenuChartOptions();
+        return true;
+    }
+
+    /**
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        switch (item.getItemId()){
+            case R.id.menu_update_data:
+                presenter.updateExchangeRates(true);
+                break;
+            case R.id.menu_chart_daily:
+                editor.putBoolean(PREFERENCE_CHART_DAILY, true).commit();
+                updateMenuChartOptions();
+                presenter.updateExchangeRates(false);
+                break;
+            case R.id.menu_chart_monthly:
+                editor.putBoolean(PREFERENCE_CHART_DAILY, false).commit();
+                updateMenuChartOptions();
+                presenter.updateExchangeRates(false);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+    }
+
+    /**
+     *
+     */
+    private void updateMenuChartOptions(){
+        SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
+        boolean dailyChart = settings.getBoolean(PREFERENCE_CHART_DAILY, true);
+        MenuItem dailyItem = menu.findItem(R.id.menu_chart_daily);
+        MenuItem monthlyItem = menu.findItem(R.id.menu_chart_monthly);
+
+        if(dailyChart){
+            dailyItem.setChecked(true);
+        }else{
+            monthlyItem.setChecked(true);
+        }
+    }
 
     /**
      *
@@ -126,7 +220,6 @@ public class MainActivity extends BaseActivity implements ConverterView{
         rateBzField.setText(String.format(template, FormatUtils.formatDouble(brzRate)));
 
         mChart.animateXY(DEFAULT_CHART_ANIMATION_TIME, DEFAULT_CHART_ANIMATION_TIME);
-        Toast.makeText(this, "Exchange Rates Updated", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -157,26 +250,36 @@ public class MainActivity extends BaseActivity implements ConverterView{
 
     /**
      *
-     * @param euroRate
-     * @param gbpRate
-     * @param jpyRate
-     * @param brlRate
+     * @param ratesList
+     * @param isShowingDailyValues
      */
     @Override
-    public void updateChart(double euroRate, double gbpRate, double jpyRate, double brlRate) {
+    public void updateChartValues(List<Rates> ratesList, boolean isShowingDailyValues){
+        mChart.clear();
+        Calendar calendar = Calendar.getInstance();
+
         if (mChart.getData() == null || mChart.getData().getDataSetCount() == 0) {
-            initChartValues();
+            initChartDataSets();
         }
 
-        int entryCounter = mChart.getData().getDataSetByIndex(EURO_DATASET_POSITION).getEntryCount();
-        jpyRate /= JAPAN_SCALE_FACTOR;
-        entryCounter++;
-        mChart.getData().addEntry(new Entry(entryCounter, ((Double) euroRate).floatValue()), EURO_DATASET_POSITION);
-        mChart.getData().addEntry(new Entry(entryCounter, ((Double) gbpRate).floatValue()), GBP_DATASET_POSITION);
-        mChart.getData().addEntry(new Entry(entryCounter, ((Double) jpyRate).floatValue()), JPY_DATASET_POSITION);
-        mChart.getData().addEntry(new Entry(entryCounter, ((Double) brlRate).floatValue()), BRL_DATASET_POSITION);
-        mChart.getData().notifyDataChanged();
+        for (int i = 0; i < ratesList.size(); i++) {
+            Rates rates = ratesList.get(i);
+            int xIndex = i + 1;
+
+            if(!isShowingDailyValues){
+                calendar.setTime(rates.getDate());
+                xIndex = calendar.get(Calendar.DAY_OF_MONTH);
+            }
+
+            mChart.getData().addEntry(new Entry(xIndex, rates.getEUR().floatValue()), EURO_DATASET_POSITION);
+            mChart.getData().addEntry(new Entry(xIndex, rates.getGBP().floatValue()), GBP_DATASET_POSITION);
+            mChart.getData().addEntry(new Entry(xIndex, rates.getJPY().floatValue() / JAPAN_SCALE_FACTOR), JPY_DATASET_POSITION);
+            mChart.getData().addEntry(new Entry(xIndex, rates.getBRL().floatValue() / BRAZIL_SCALE_FACTOR), BRL_DATASET_POSITION);
+        }
+
         mChart.notifyDataSetChanged();
+        mChart.getData().notifyDataChanged();
+        mChart.invalidate();
         mChart.setVisibility(View.VISIBLE);
     }
 
@@ -206,7 +309,20 @@ public class MainActivity extends BaseActivity implements ConverterView{
         Toast.makeText(this, message, length).show();
     }
 
-    private void initChartValues(){
+    /**
+     *
+     * @return
+     */
+    @Override
+    public boolean isConfiguredDailyChart() {
+        SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
+        return settings.getBoolean(PREFERENCE_CHART_DAILY, true);
+    }
+
+    /**
+     *
+     */
+    private void initChartDataSets(){
         List<Entry> euroEntries = new ArrayList<>();
         List<Entry> gbpEntries = new ArrayList<>();
         List<Entry> jpyEntries = new ArrayList<>();
@@ -216,14 +332,12 @@ public class MainActivity extends BaseActivity implements ConverterView{
             LineDataSet euroSet = buildDataSet(Constants.CURRENCY_EURO, euroEntries, Color.rgb(239, 3, 137));
             LineDataSet gbpSet = buildDataSet(Constants.CURRENCY_GBP, gbpEntries, Color.rgb(43, 102, 196));
             LineDataSet jpySet = buildDataSet(Constants.CURRENCY_JPY + "/" + JAPAN_SCALE_FACTOR, jpyEntries, Color.rgb(235, 221, 73));
-            LineDataSet brlSet = buildDataSet(Constants.CURRENCY_BRL, brlEntries, Color.rgb(91, 191, 52));
+            LineDataSet brlSet = buildDataSet(Constants.CURRENCY_BRL + "/" + BRAZIL_SCALE_FACTOR, brlEntries, Color.rgb(91, 191, 52));
 
             euroSet.setValueTextSize(9f);
-            euroSet.setDrawValues(true);
             gbpSet.setValueTextSize(9f);
-            gbpSet.setDrawValues(true);
             jpySet.setValueTextSize(9f);
-            jpySet.setDrawValues(true);
+            brlSet.setValueTextSize(9f);
 
             LineData data = new LineData();
             data.addDataSet(euroSet);
@@ -244,12 +358,16 @@ public class MainActivity extends BaseActivity implements ConverterView{
         mChart.setTouchEnabled(true);
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
+        mChart.setNoDataText("Ups! No rates found...");
 
         XAxis x = mChart.getXAxis();
         x.setPosition(XAxis.XAxisPosition.BOTTOM);
+        //Max days of month
+        x.setAxisMinValue(0);
+        x.setAxisMaxValue(35);
 
         YAxis y = mChart.getAxisLeft();
-        y.setLabelCount(5, false);
+        y.setLabelCount(4, false);
         y.setTextColor(Color.BLACK);
         y.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         y.setDrawGridLines(true);
@@ -257,11 +375,10 @@ public class MainActivity extends BaseActivity implements ConverterView{
         mChart.getAxisRight().setEnabled(false);
         mChart.getLegend().setEnabled(true);
         mChart.getLegend().setPosition(Legend.LegendPosition.ABOVE_CHART_CENTER);
-        mChart.animateXY(DEFAULT_CHART_ANIMATION_TIME, DEFAULT_CHART_ANIMATION_TIME);
+        mChart.animateXY(DEFAULT_CHART_ANIMATION_TIME - 1000, DEFAULT_CHART_ANIMATION_TIME - 1000);
         // dont forget to refresh the drawing
         mChart.invalidate();
     }
-
 
     /**
      *
