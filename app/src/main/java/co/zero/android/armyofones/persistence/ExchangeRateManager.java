@@ -62,19 +62,23 @@ public class ExchangeRateManager {
         String query = buildQueryAvgRatesValuesByDay();
         String dateFormatted = FormatUtils.formatDate(date, DEFAULT_DATE_FORMAT);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        Cursor cursor = database.rawQuery(query.toString(), new String[]{dateFormatted});
-        Rates rates = null;
 
-        if(cursor.moveToFirst()){
-            rates = new Rates();
-            cursor.moveToFirst();
-            rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));
-            rates.setGBP(cursor.getDouble(COLUMN_GBR_INDEX));
-            rates.setJPY(cursor.getDouble(COLUMN_JPY_INDEX));
-            rates.setBRL(cursor.getDouble(COLUMN_BRL_INDEX));
+        try(Cursor cursor = database.rawQuery(query.toString(), new String[]{dateFormatted})){
+            Rates rates = null;
+
+            if(cursor.moveToFirst()){
+                rates = new Rates();
+                cursor.moveToFirst();
+                rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));
+                rates.setGBP(cursor.getDouble(COLUMN_GBR_INDEX));
+                rates.setJPY(cursor.getDouble(COLUMN_JPY_INDEX));
+                rates.setBRL(cursor.getDouble(COLUMN_BRL_INDEX));
+            }
+
+            return rates;
+        }finally {
+            database.close();
         }
-
-        return rates;
     }
 
     /**
@@ -87,9 +91,10 @@ public class ExchangeRateManager {
         String dateFormatted = FormatUtils.formatDate(date, DEFAULT_DATE_FORMAT);
         String[] params = new String[]{dateFormatted};
         List<Rates> ratesList = new ArrayList<>();
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
         Rates rates;
 
-        try (Cursor cursor = dbHelper.getReadableDatabase().rawQuery(query.toString(), params)){
+        try (Cursor cursor = database.rawQuery(query.toString(), params)){
             while (cursor.moveToNext()) {
                 rates = new Rates();
                 rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));
@@ -105,6 +110,8 @@ public class ExchangeRateManager {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
             }
+        }finally {
+            database.close();
         }
 
         return ratesList;
@@ -119,9 +126,10 @@ public class ExchangeRateManager {
         String[] params = buildParamsQueryRatesValuesByMonth(date);
         String query = buildQueryRatesValuesByMonth();
         List<Rates> ratesList = new ArrayList<>();
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
         Rates rates;
 
-        try (Cursor cursor = dbHelper.getReadableDatabase().rawQuery(query.toString(), params)) {
+        try (Cursor cursor = database.rawQuery(query.toString(), params)) {
             while (cursor.moveToNext()) {
                 rates = new Rates();
                 rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));
@@ -137,6 +145,8 @@ public class ExchangeRateManager {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
             }
+        }finally {
+            database.close();
         }
 
         return ratesList;
