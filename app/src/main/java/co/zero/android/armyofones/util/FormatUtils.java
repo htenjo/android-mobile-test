@@ -11,11 +11,27 @@ import java.util.Date;
  * Created by htenjo on 8/19/16.
  */
 public class FormatUtils {
+    private FormatUtils(){
+    }
+
+    /**
+     * Get the date string representation according with the given pattern
+     * @param date The date to format
+     * @param pattern The format to apply
+     * @return The date formatted as string
+     */
     public static String formatDate(Date date, String pattern){
         DateFormat format = new SimpleDateFormat(pattern);
         return format.format(date);
     }
 
+    /**
+     * Get a number with max and min decimals
+     * @param number The number to format
+     * @param minDecimals Minimum decimals to show
+     * @param maxDecimals Maximum decimals to show
+     * @return The number formatted
+     */
     public static String formatDouble(double number, int minDecimals, int maxDecimals){
         NumberFormat format = NumberFormat.getNumberInstance();
         format.setMinimumFractionDigits(minDecimals);
@@ -23,10 +39,21 @@ public class FormatUtils {
         return format.format(number);
     }
 
+    /**
+     * Get a number with the default min and max decimals
+     * @param number The  number to format
+     * @return The number formatted with default values
+     */
     public static String formatDouble(double number){
         return formatDouble(number, Constants.DEFAULT_MIN_DECIMALS, Constants.DEFAULT_MAX_DECIMALS);
     }
 
+    /**
+     * Get the representation of a number as a currency
+     * @param value The number to format
+     * @param currencyCode The ISO-4217 format
+     * @return The number formatted as a currency
+     */
     public static String formatCurrency(double value, String currencyCode){
         NumberFormat format = NumberFormat.getCurrencyInstance();
         Currency currency = Currency.getInstance(currencyCode);
@@ -36,6 +63,13 @@ public class FormatUtils {
         return format.format(value);
     }
 
+    /**
+     * Get the Date object from a string given a format
+     * @param dateFormated The string containing the date
+     * @param format Format of the date that has the string
+     * @return The date object according to the format
+     * @throws ParseException If the pattern of the date are wrong
+     */
     public static Date parseDate(String dateFormated, String format) throws ParseException {
         DateFormat formatter = new SimpleDateFormat(format);
         return formatter.parse(dateFormated);

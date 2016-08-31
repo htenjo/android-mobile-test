@@ -29,4 +29,7 @@ public class Constants {
     public static final String POJO_FIELD_EUR = CURRENCY_EURO;
 
     public static final String TEXT_RATE_TEMPLATE = "Rate: %s";
+
+    private Constants(){
+    }
 }
