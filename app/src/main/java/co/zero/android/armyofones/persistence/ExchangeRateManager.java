@@ -45,12 +45,7 @@ public class ExchangeRateManager {
         values.put(ExchangeRateContract.RateEntry.COLUMN_BRL, rates.getBRL());
         values.put(ExchangeRateContract.RateEntry.COLUMN_DATE, FormatUtils.formatDate(date, DEFAULT_DATE_FORMAT));
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
-
-        try{
-            return sqLiteDatabase.insert(ExchangeRateContract.RateEntry.TABLE_NAME, null, values);
-        }finally {
-            sqLiteDatabase.close();
-        }
+        return sqLiteDatabase.insert(ExchangeRateContract.RateEntry.TABLE_NAME, null, values);
     }
 
     /**
@@ -76,8 +71,6 @@ public class ExchangeRateManager {
             }
 
             return rates;
-        }finally {
-            database.close();
         }
     }
 
@@ -110,8 +103,6 @@ public class ExchangeRateManager {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
             }
-        }finally {
-            database.close();
         }
 
         return ratesList;
@@ -145,8 +136,6 @@ public class ExchangeRateManager {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
             }
-        }finally {
-            database.close();
         }
 
         return ratesList;
