@@ -3,6 +3,7 @@ package co.zero.android.armyofones.view;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,20 +33,21 @@ import java.util.List;
 import co.zero.android.armyofones.R;
 import co.zero.android.armyofones.model.Rates;
 import co.zero.android.armyofones.presenter.MainPresenter;
+import co.zero.android.armyofones.util.AndroidUtils;
 import co.zero.android.armyofones.util.Constants;
 import co.zero.android.armyofones.util.FormatUtils;
 
 public class MainActivity extends BaseActivity implements ConverterView{
-    private static final int EURO_DATASET_POSITION = 0;
-    private static final int GBP_DATASET_POSITION = 1;
-    private static final int JPY_DATASET_POSITION = 2;
-    private static final int BRL_DATASET_POSITION = 3;
+    private static final int EURO_DATA_SET_POSITION = 0;
+    private static final int GBP_DATA_SET_POSITION = 1;
+    private static final int JPY_DATA_SET_POSITION = 2;
+    private static final int BRL_DATA_SET_POSITION = 3;
     private static final int DEFAULT_CHART_ANIMATION_TIME = 1500;
     private static final int JAPAN_SCALE_FACTOR = 100;
     private static final int BRAZIL_SCALE_FACTOR = 3;
-    public static final String SAVED_RATES_NAME = "currentRates";
+    private static final String SAVED_RATES_NAME = "currentRates";
     public static final String SAVED_VALUE_NAME = "currentValue";
-    public static final String PREFERENCES_NAME = "ArmyOfOnesPref";
+    private static final String PREFERENCES_NAME = "ArmyOfOnesPref";
     public static final String PREFERENCE_CHART_DAILY = "dailyChartType";
     private HashMap<String, Double> currentRates;
     private Double currentValue;
@@ -69,6 +71,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
             @Override
             public void onClick(View view) {
                 presenter.updateExchangeRates(false);
+                AndroidUtils.hideSoftKeyboard(MainActivity.this);
             }
         });
 
@@ -79,9 +82,10 @@ public class MainActivity extends BaseActivity implements ConverterView{
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
                         || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     presenter.updateExchangeRates(false);
+                    AndroidUtils.hideSoftKeyboard(MainActivity.this);
                 }
 
-                return false;
+                return true;
             }
         });
 
@@ -103,7 +107,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
         this.menu = menu;
 
         if(!settings.contains(PREFERENCE_CHART_DAILY)){
-            editor.putBoolean(PREFERENCE_CHART_DAILY, true).commit();
+            editor.putBoolean(PREFERENCE_CHART_DAILY, true).apply();
         }
 
         updateMenuChartOptions();
@@ -125,12 +129,12 @@ public class MainActivity extends BaseActivity implements ConverterView{
                 presenter.updateExchangeRates(true);
                 break;
             case R.id.menu_chart_daily:
-                editor.putBoolean(PREFERENCE_CHART_DAILY, true).commit();
+                editor.putBoolean(PREFERENCE_CHART_DAILY, true).apply();
                 updateMenuChartOptions();
                 presenter.updateExchangeRates(false);
                 break;
             case R.id.menu_chart_monthly:
-                editor.putBoolean(PREFERENCE_CHART_DAILY, false).commit();
+                editor.putBoolean(PREFERENCE_CHART_DAILY, false).apply();
                 updateMenuChartOptions();
                 presenter.updateExchangeRates(false);
                 break;
@@ -220,6 +224,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
         rateBzField.setText(String.format(template, FormatUtils.formatDouble(brzRate)));
 
         mChart.animateXY(DEFAULT_CHART_ANIMATION_TIME, DEFAULT_CHART_ANIMATION_TIME);
+        Log.i(getLogTag(), "Exchange rates updated in MainView");
     }
 
     /**
@@ -271,10 +276,10 @@ public class MainActivity extends BaseActivity implements ConverterView{
                 xIndex = calendar.get(Calendar.DAY_OF_MONTH);
             }
 
-            mChart.getData().addEntry(new Entry(xIndex, rates.getEUR().floatValue()), EURO_DATASET_POSITION);
-            mChart.getData().addEntry(new Entry(xIndex, rates.getGBP().floatValue()), GBP_DATASET_POSITION);
-            mChart.getData().addEntry(new Entry(xIndex, rates.getJPY().floatValue() / JAPAN_SCALE_FACTOR), JPY_DATASET_POSITION);
-            mChart.getData().addEntry(new Entry(xIndex, rates.getBRL().floatValue() / BRAZIL_SCALE_FACTOR), BRL_DATASET_POSITION);
+            mChart.getData().addEntry(new Entry(xIndex, rates.getEUR().floatValue()), EURO_DATA_SET_POSITION);
+            mChart.getData().addEntry(new Entry(xIndex, rates.getGBP().floatValue()), GBP_DATA_SET_POSITION);
+            mChart.getData().addEntry(new Entry(xIndex, rates.getJPY().floatValue() / JAPAN_SCALE_FACTOR), JPY_DATA_SET_POSITION);
+            mChart.getData().addEntry(new Entry(xIndex, rates.getBRL().floatValue() / BRAZIL_SCALE_FACTOR), BRL_DATA_SET_POSITION);
         }
 
         mChart.notifyDataSetChanged();
@@ -376,7 +381,7 @@ public class MainActivity extends BaseActivity implements ConverterView{
         mChart.getLegend().setEnabled(true);
         mChart.getLegend().setPosition(Legend.LegendPosition.ABOVE_CHART_CENTER);
         mChart.animateXY(DEFAULT_CHART_ANIMATION_TIME - 1000, DEFAULT_CHART_ANIMATION_TIME - 1000);
-        // dont forget to refresh the drawing
+        // don't forget to refresh the drawing
         mChart.invalidate();
     }
 

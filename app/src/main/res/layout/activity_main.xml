@@ -9,16 +9,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".view.MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/textTitleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
             android:text="@string/army_of_ones_title"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -26,18 +25,19 @@
             android:id="@+id/text_value_us"
             android:layout_width="@dimen/input_text_size"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
             android:ems="10"
             android:hint="@string/currency_us_symbol"
             android:inputType="number"
             android:singleLine="true"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:layout_below="@id/textTitleView"/>
 
         <Button
             android:id="@+id/button_convert"
             android:layout_width="@dimen/button_convert_layout_width"
             android:layout_height="@dimen/button_convert_layout_height"
-            android:layout_gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/button_convert_margin_bottom"
             android:layout_marginTop="@dimen/default_margin"
             android:background="@drawable/buttonshape"
@@ -45,9 +45,11 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/button_convert_text_size"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:layout_below="@id/text_value_us"/>
 
         <LinearLayout
+            android:id="@+id/linearLayout_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -55,7 +57,8 @@
             android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/default_padding">
+            android:paddingLeft="@dimen/default_padding"
+            android:layout_below="@id/button_convert">
 
             <ImageView
                 android:layout_width="@dimen/flag_size"
@@ -109,18 +112,18 @@
                     android:layout_height="wrap_content"
                     android:text="@string/currency_jpn_symbol"
                     android:textSize="@dimen/flag_text_value_size" />
-
             </LinearLayout>
-
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/default_padding">
+            android:paddingLeft="@dimen/default_padding"
+            android:layout_below="@+id/linearLayout_1">
 
             <ImageView
                 android:layout_width="@dimen/flag_size"
@@ -176,7 +179,6 @@
                     android:text="@string/currency_brl_symbol"
                     android:textSize="@dimen/flag_text_value_size" />
             </LinearLayout>
-
         </LinearLayout>
 
         <com.github.mikephil.charting.charts.LineChart
@@ -184,6 +186,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/chart_height"
             android:layout_marginTop="@dimen/chart_margin"
-            android:visibility="gone"/>
-    </LinearLayout>
+            android:visibility="gone"
+            android:layout_below="@id/linearLayout_2"/>
+
+    </RelativeLayout>
 </ScrollView>

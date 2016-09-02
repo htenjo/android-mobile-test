@@ -65,13 +65,13 @@ public class FormatUtils {
 
     /**
      * Get the Date object from a string given a format
-     * @param dateFormated The string containing the date
+     * @param dateFormatted The string containing the date
      * @param format Format of the date that has the string
      * @return The date object according to the format
      * @throws ParseException If the pattern of the date are wrong
      */
-    public static Date parseDate(String dateFormated, String format) throws ParseException {
+    public static Date parseDate(String dateFormatted, String format) throws ParseException {
         DateFormat formatter = new SimpleDateFormat(format);
-        return formatter.parse(dateFormated);
+        return formatter.parse(dateFormatted);
     }
 }

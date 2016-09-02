@@ -29,7 +29,7 @@ public class FormatUtilsTest {
 
     @Test
     public void testFormatDate() throws Exception {
-        String pattern = "yyyy-MM-dd";
+        String pattern = Constants.DEFAULT_DATE_FORMAT;
         String expectedDateFormatted = "2016-01-01";
         Calendar currentDate = Calendar.getInstance();
         currentDate.set(Calendar.YEAR, 2016);
@@ -65,7 +65,7 @@ public class FormatUtilsTest {
 
     @Test
     public void testParseDate() throws Exception {
-        Date date = FormatUtils.parseDate("2016-01-01", "yyyy-MM-dd");
+        Date date = FormatUtils.parseDate("2016-01-01", Constants.DEFAULT_DATE_FORMAT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         Assert.assertEquals(2016, calendar.get(Calendar.YEAR));
@@ -75,6 +75,6 @@ public class FormatUtilsTest {
 
     @Test(expected = ParseException.class)
     public void testParseDateException() throws Exception {
-        FormatUtils.parseDate("asdasd", "yyyy-MM-dd");
+        FormatUtils.parseDate(this.getClass().getName(), Constants.DEFAULT_DATE_FORMAT);
     }
 }

@@ -4,7 +4,6 @@ import co.zero.android.armyofones.model.CurrencyBase;
 import co.zero.android.armyofones.util.Constants;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -17,13 +16,8 @@ public interface CurrencyExchangeService {
      * @param requiredCurrencies Required rate currency symbols
      * @return All the earthQuakes generated between the dates
      */
-    @GET(Constants.SERVICE_LASTEST_RESOURCE)
-    Call<CurrencyBase> getLastestExchangeRates(
+    @GET(Constants.SERVICE_LATEST_RESOURCE)
+    Call<CurrencyBase> getLatestExchangeRates(
             @Query("base") String baseCurrency,
             @Query("symbols") String requiredCurrencies);
-
-    @GET(Constants.SERVICE_HISTORICAL_RESOURCE)
-    Call<CurrencyBase> getHistoricalExchangeRates(
-            @Path("date") String exchangeRateDate,
-            @Query("symbols") String... requiredCurrencies);
 }

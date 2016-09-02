@@ -12,7 +12,6 @@ import java.util.Date;
 import co.zero.android.armyofones.util.Constants;
 
 public class Rates implements Serializable{
-
     @SerializedName(Constants.POJO_FIELD_BRL)
     @Expose
     private Double bRL;

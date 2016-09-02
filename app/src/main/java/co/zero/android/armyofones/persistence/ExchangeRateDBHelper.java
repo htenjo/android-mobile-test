@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by htenjo on 8/26/16.
  */
 public class ExchangeRateDBHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 4;
-    public static final String DATABASE_NAME = "exchange_rate.db";
+    private static final int DATABASE_VERSION = 4;
+    private static final String DATABASE_NAME = "exchange_rate.db";
 
     /**
      *

@@ -13,13 +13,14 @@ import java.util.Date;
 import java.util.List;
 
 import co.zero.android.armyofones.model.Rates;
+import co.zero.android.armyofones.util.Constants;
 import co.zero.android.armyofones.util.FormatUtils;
 
 /**
  * Created by htenjo on 8/26/16.
  */
 public class ExchangeRateManager {
-    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String DEFAULT_DATE_FORMAT = Constants.DEFAULT_DATE_FORMAT;
     private static final int COLUMN_EURO_INDEX = 0;
     private static final int COLUMN_GBR_INDEX = 1;
     private static final int COLUMN_JPY_INDEX = 2;
@@ -58,7 +59,7 @@ public class ExchangeRateManager {
         String dateFormatted = FormatUtils.formatDate(date, DEFAULT_DATE_FORMAT);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
 
-        try(Cursor cursor = database.rawQuery(query.toString(), new String[]{dateFormatted})){
+        try(Cursor cursor = database.rawQuery(query, new String[]{dateFormatted})){
             Rates rates = null;
 
             if(cursor.moveToFirst()){
@@ -87,7 +88,7 @@ public class ExchangeRateManager {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Rates rates;
 
-        try (Cursor cursor = database.rawQuery(query.toString(), params)){
+        try (Cursor cursor = database.rawQuery(query, params)){
             while (cursor.moveToNext()) {
                 rates = new Rates();
                 rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));
@@ -120,7 +121,7 @@ public class ExchangeRateManager {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Rates rates;
 
-        try (Cursor cursor = database.rawQuery(query.toString(), params)) {
+        try (Cursor cursor = database.rawQuery(query, params)) {
             while (cursor.moveToNext()) {
                 rates = new Rates();
                 rates.setEUR(cursor.getDouble(COLUMN_EURO_INDEX));

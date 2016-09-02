@@ -23,23 +23,7 @@ public class CurrencyExchangeServiceTest {
     }
 
     @Test
-    public void testGetLastestExchangeRates() throws Exception {
-        /*Call<CurrencyBase> callback = service.getLastestExchangeRates(Constants.CURRENCY_US, requiredCurrencies);
-        callback.enqueue(new Callback<CurrencyBase>() {
-            @Override
-            public void onResponse(Call<CurrencyBase> call, Response<CurrencyBase> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<CurrencyBase> call, Throwable t) {
-
-            }
-        });*/
-    }
-
-    @Test
-    public void testGetHistoricalExchangeRates() throws Exception {
-
+    public void testGetLatestExchangeRates() throws Exception {
+        //TODO: Implement this test
     }
 }

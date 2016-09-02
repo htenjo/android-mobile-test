@@ -76,7 +76,7 @@ public class MainPresenter {
             String currenciesParams = Arrays.toString(currencies);
             currenciesParams = currenciesParams.substring(1, currenciesParams.length() - 1);
 
-            Call<CurrencyBase> call = service.getLastestExchangeRates(Constants.CURRENCY_US, currenciesParams);
+            Call<CurrencyBase> call = service.getLatestExchangeRates(Constants.CURRENCY_US, currenciesParams);
             call.enqueue(new Callback<CurrencyBase>() {
                 @Override
                 public void onResponse(Call<CurrencyBase> call, Response<CurrencyBase> response) {
